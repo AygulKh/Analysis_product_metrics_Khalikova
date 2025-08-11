@@ -1,0 +1,36 @@
+WITH top_countries AS (
+    SELECT
+        country,
+        count(DISTINCT user_id) AS users_count
+    FROM simulator_20250520.feed_actions
+    WHERE toDate(time) >= today() - 30
+    GROUP BY country
+    ORDER BY users_count DESC
+    LIMIT 5
+)
+
+SELECT
+    toDate(time) AS date,
+    fa.country,
+    count(DISTINCT fa.user_id) AS dau,
+fa.post_id,
+fa.action,
+fa.gender,
+fa.age,
+fa.city,
+fa.os,
+fa.source,
+fa.exp_group
+FROM simulator_20250520.feed_actions fa
+INNER JOIN top_countries tc ON fa.country = tc.country
+WHERE toDate(fa.time) >= today() - 30
+GROUP BY date, fa.country, 
+fa.post_id,
+fa.action,
+fa.gender,
+fa.age,
+fa.city,
+fa.os,
+fa.source,
+fa.exp_group
+ORDER BY date, dau DESC	

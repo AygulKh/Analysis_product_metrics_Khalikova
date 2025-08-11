@@ -1,0 +1,17 @@
+SELECT
+    city,
+    count(DISTINCT user_id) AS unique_users
+FROM simulator_20250520.feed_actions
+WHERE 
+    user_id IN (
+        SELECT DISTINCT user_id
+        FROM simulator_20250520.feed_actions
+        WHERE toDate(time) = '2025-05-23'
+    )
+    AND user_id NOT IN (
+        SELECT DISTINCT user_id
+        FROM simulator_20250520.feed_actions
+        WHERE toDate(time) = '2025-05-24'
+    )
+GROUP BY city
+ORDER BY unique_users DESC
